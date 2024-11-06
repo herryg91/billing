@@ -1,0 +1,67 @@
+syntax = "proto3";
+package billing;
+option go_package = ".;billing";
+
+// Any changes on this, don't forget to generate to libs/interceptors/auth
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "cdd/api/cddext.proto";
+
+
+service BillingApi {
+    rpc GetBillingByLoanCode(GetBillingByLoanCodeReq) returns (Billings) {
+        option (google.api.http) = {
+            get: "/billing/loan/{LoanCode}"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+    rpc GetBillingOverDue(google.protobuf.Empty) returns (Billings) {
+        option (google.api.http) = {
+            get: "/billing/overdue"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    }
+
+    rpc GenerateBillingPayment(GenerateBillingPaymentReq) returns (Billing) {
+        option (google.api.http) = {
+            get: "/billing/payment/{LoanCode}/{InstallmentNumber}"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    }
+    rpc SettleBillingPayment(GenerateBillingPaymentReq) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/billing/settle/{LoanCode}/{InstallmentNumber}"
+            body: "*"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    }
+}
+
+message GetBillingByLoanCodeReq {
+    string LoanCode = 1 [json_name="loan_code", (cdd.api.validate) = "required"];
+}
+
+message Billings{
+    repeated Billing Billings = 14 [json_name="billings"];
+}
+
+message Billing{
+    int32 Id = 1 [json_name="id"];
+    string LoanCode = 8 [json_name="loan_code"];
+    int32 InstallmentNumber = 2 [json_name="installment_number"];
+    string DueDate = 3  [json_name="due_date", (cdd.api.validate) = "date"];
+    double Principal = 4 [json_name="principal"];
+    double InterestAmount = 5 [json_name="interest_amount"];
+    double TotalAmount = 6 [json_name="total_amount"];
+    string PaymentStatus = 7 [json_name="payment_status", (cdd.api.validate) = "enum=UNPAID,WAIT_FOR_PAYMENT,PAID"];
+    string PaymentBank = 9 [json_name="payment_bank"];
+    string PaymentVA = 10 [json_name="payment_va"];
+    google.protobuf.Timestamp PaymentExpiredAt = 11 [json_name="payment_expired_at"];
+}
+
+message GenerateBillingPaymentReq {
+    string LoanCode = 1 [json_name="loan_code", (cdd.api.validate) = "required"];
+    int32 InstallmentNumber = 2 [json_name="installment_number", (cdd.api.validate) = "required"];
+}

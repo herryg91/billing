@@ -1,0 +1,55 @@
+syntax = "proto3";
+package usertoken;
+option go_package = ".;usertoken";
+
+// Any changes on this, don't forget to generate to libs/interceptors/auth
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "cdd/api/cddext.proto";
+
+
+service UsertokenAPI {
+    rpc GenerateToken(GenerateTokenReq) returns (UserToken) {
+        // option (google.api.http) = { post: "/generate-token", body: "*" };
+    }
+    // grpcurl -d '{"UserId": 1, "Email": "admin@billing.com"}' -plaintext localhost:39000 usertoken.UsertokenAPI/GenerateToken
+
+    rpc RefreshToken(RefreshTokenReq) returns (UserToken) {
+        option (google.api.http) = {
+            post: "/usertoken/refresh"
+            body: "*"
+        };
+    }
+    
+    rpc ValidateToken(ValidateTokenReq) returns (UserTokenClaim) {
+        option (google.api.http) = {
+            post: "/usertoken/validate"
+            body: "*"
+        };
+    }
+}
+
+message GenerateTokenReq {
+    int32 UserId = 2 [json_name="user_id", (cdd.api.validate) = "required"];
+    string Email = 3 [json_name="email", (cdd.api.validate) = "required|email"];
+}
+
+message RefreshTokenReq {
+    string RefreshToken = 1 [json_name="refresh_token", (cdd.api.validate) = "required"];
+}
+
+message ValidateTokenReq {
+    string AuthToken = 1 [json_name="auth_token", (cdd.api.validate) = "required"];
+}
+
+message UserToken {
+    string AuthToken = 1 [json_name="auth_token"];
+    string RefreshToken = 2 [json_name="refresh_token"];
+    string TokenType = 3 [json_name="token_type"];
+}
+
+message UserTokenClaim {
+    int32 UserId = 1 [json_name="user_id"];
+    string Email = 2 [json_name="email"];
+}

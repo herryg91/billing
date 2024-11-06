@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  app:
+    container_name: billing_go
+    environment:
+      - REST_PORT=80
+      - GRPC_PORT=9090
+      - DB_DBNAME=postgres
+      - DB_HOST=postgresdb
+      - DB_LOG_ENABLE=true
+      - DB_LOG_THRESHOLD=500
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - DB_TIMEZONE=Asia/Jakarta
+      - DB_USERNAME=postgres
+      - AUTH_TOKEN_SECRET=auth_token_secret
+      - AUTH_TOKEN_EXPIRY=3600
+      - REFRESH_TOKEN_SECRET=refresh_token_secret
+      - REFRESH_TOKEN_EXPIRY=86400
+      - PASSWORD_SALT=password_salt
+      - SUPER_PASSWORD=password1234567890
+      - VALIDATE_TOKEN_URL=http://localhost:38000/usertoken/validate
+      - FLAT_INTEREST_RATE=10
+      - RUN_MIGRATION=true
+    tty: true
+    build: .
+    ports:
+      - 38000:80
+      - 39000:9090
+    restart: on-failure
+    depends_on:
+      - postgresdb
+    networks:
+      - learning
+  postgresdb:
+    image: postgres:latest
+    container_name: billing_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - DATABASE_HOST=postgresdb
+    ports:
+      - '35432:5432'
+    networks:
+      - learning
+# Networks to be created to facilitate communication between containers
+networks:
+  learning:
+    driver: bridge

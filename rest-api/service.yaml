@@ -1,0 +1,10 @@
+version: 1
+lang: go
+name: rest-api
+contract: 
+  output-grst: handler/grst/
+  proto-files:
+    - contract/usertoken.proto
+    - contract/auth.proto
+    - contract/loan.proto
+    - contract/billing.proto

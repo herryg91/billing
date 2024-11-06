@@ -1,0 +1,40 @@
+syntax = "proto3";
+package auth;
+option go_package = ".;auth";
+
+import "google/api/annotations.proto";
+// import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "cdd/api/cddext.proto";
+
+service UserAuthApi {
+    rpc Login(LoginReq) returns (UserToken) {
+        option (google.api.http) = {
+            post: "/user/login"
+            body: "*"
+        };
+    }
+
+    rpc GetAuthenticated(google.protobuf.Empty) returns (AuthenticatedUser) {
+        option (google.api.http) = {
+            get: "/user/current"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+}
+
+message LoginReq {
+    string Email = 1 [json_name="email", (cdd.api.validate) = "required|email"];
+    string Password = 2 [json_name="password", (cdd.api.validate) = "required"];
+}
+
+message UserToken {
+    string AuthToken = 1 [json_name="auth_token"];
+    string RefreshToken = 2 [json_name="refresh_token"];
+}
+
+message AuthenticatedUser {
+    int32 Id = 1 [json_name="id"];
+	string Email = 2 [json_name="email"];
+	string Name = 3 [json_name="name"];
+}

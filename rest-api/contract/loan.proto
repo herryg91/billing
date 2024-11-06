@@ -1,0 +1,108 @@
+syntax = "proto3";
+package loan;
+option go_package = ".;loan";
+
+// Any changes on this, don't forget to generate to libs/interceptors/auth
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "cdd/api/cddext.proto";
+
+
+service LoanApi {
+    rpc GetMySummary(google.protobuf.Empty) returns (LoanSummary) {
+        option (google.api.http) = {
+            get: "/loan/my-summary"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+
+    rpc SimulateLoan(SimulateLoanReq) returns (LoanSimulation) {
+        option (google.api.http) = {
+            post: "/loan/simulate"
+            body: "*"
+        };
+    } 
+
+    rpc CreateLoan(CreateLoanReq) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/loan"
+            body: "*"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+    
+    rpc GetLoans(google.protobuf.Empty) returns (Loans) {
+        option (google.api.http) = {
+            get: "/loan"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+    
+    rpc GetLoanByCode(GetLoanByCodeReq) returns (Loan) {
+        option (google.api.http) = {
+            get: "/loan/{Code}/view"
+        };
+        option (cdd.api.auth) = { needauth: true };
+    } 
+}
+
+message LoanSummary {
+    int32 LoanCount = 1 [json_name="loan_count"];
+    double TotalOutstanding = 2 [json_name="total_outstanding"];
+    bool IsDelinquent = 3 [json_name="is_delinquent"];
+}
+
+message SimulateLoanReq {
+    int32 InstallmentLength = 1 [json_name="installment_length", (cdd.api.validate) = "required"];
+    double Principal = 2 [json_name="principal", (cdd.api.validate) = "required"];
+}
+
+message LoanSimulation{
+    int32 InstallmentLength = 1 [json_name="installment_length"];
+    double Principal = 2 [json_name="principal"];
+    double InterestAmount = 3 [json_name="interest_amount"];
+    double TotalAmount = 4 [json_name="total_amount"];
+    repeated LoanBillingSimulation Billings = 5 [json_name="billings"];
+}
+
+message LoanBillingSimulation{
+    int32 InstallmentNumber = 1  [json_name="installment_number"];
+    double Principal = 2  [json_name="principal"];
+    double InterestAmount = 3  [json_name="interest_amount"];
+    double TotalAmount = 4  [json_name="total_amount"];
+}
+
+message CreateLoanReq {
+    string Description = 1 [json_name="description", (cdd.api.validate) = "required"];
+    int32 InstallmentLength = 2 [json_name="installment_length", (cdd.api.validate) = "required"];
+    double Principal = 3 [json_name="principal", (cdd.api.validate) = "required"];
+}
+
+
+message Loans{
+    repeated Loan Loans = 1 [json_name="loans"];
+}
+
+message Loan{
+    string Code = 1 [json_name="code"];
+    string Description = 2 [json_name="description"];
+    string InstallmentCycle = 3 [json_name="installment_cycle"];
+    int32 InstallmentLength = 4 [json_name="installment_length"];
+    string InterestType = 5 [json_name="interest_type"];
+    double InterestPercent = 6 [json_name="interest_percent"];
+    double Principal = 7 [json_name="principal"];
+    double InterestAmount = 8 [json_name="interest_amount"];
+    double TotalAmount = 9 [json_name="total_amount"];
+    double Outstanding = 10 [json_name="outstanding"];
+    string Status = 11 [json_name="status", (cdd.api.validate) = "enum=PENDING,APPROVED,ACTIVE,DONE"];
+    google.protobuf.Timestamp CreatedAt = 13 [json_name="created_at"];
+}
+
+message GetLoanByCodeReq {
+    string Code = 1 [json_name="code", (cdd.api.validate) = "required"];
+}
+
+
+

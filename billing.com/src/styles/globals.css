@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next {
+  height: 100%;
+}
+
+
+.modal:has(.modal-transparent):not(dialog:not(.modal-open)), .modal::backdrop {
+  background-color: rgba(0, 0, 0, 0);
+  animation: modal-pop 0.2s ease-out;
+}
+.modal:has(.modal-slide-bottom) {
+  align-items: self-end;
+}
+.modal-slide-bottom {
+  animation: slideup 0.35s forwards;
+}
+
+
+.modal:has(.modal-slide-right) {
+  justify-items: end;
+}
+
+.modal-slide-right {
+  animation: slide 0.35s forwards;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideup {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.modal:has(.modal-no-backdrop){
+  background-color: inherit!important;
+}
+/* :root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} */
