@@ -92,9 +92,8 @@ Run create-user script in `cmd/create-user`. This script requires 3 args:
 3. --name or -n
 
 ```
-
 ./create-user -e admin@billing.com -p password123 -n admin
 
 ```
 
-Notes: don't forget to set the environment variable
+Notes: don't forget to set the environment variable (database, etc)
