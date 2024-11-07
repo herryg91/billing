@@ -2,9 +2,7 @@
 
 This project primarily follows a clean architecture pattern and uses a home-made framework called GRST—a combination of REST-API and gRPC. 
 
-You can find it here: https://github.com/herryg91/cdd.
-
-  
+Our Framework: https://github.com/herryg91/cdd.
 
 ## How to Run
 
