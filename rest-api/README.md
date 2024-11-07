@@ -63,7 +63,6 @@ Environment variables can be found in the /config folder and overridden in the .
 - **AUTH_TOKEN_SECRET**: Used to generate JWT tokens for session management.
 - **REFRESH_TOKEN_SECRET**: Used for generating JWT refresh tokens.
 - **PASSWORD_SALT**: Salt used for JWT token creation. Changing this will affect user table seeding.
-- **VALIDATE_TOKEN_URL**: URL for the token validation middleware, typically set to http://localhost:{REST_PORT}/validate.
 - **FLAT_INTEREST_RATE**: Configures the annual flat rate, used in loan simulations and in generating loan and billing schedules.
 - **RUN_MIGRATION**: if set into TRUE will run the migrations using embedded [Goose](https://github.com/pressly/goose) everytime the application run
 
